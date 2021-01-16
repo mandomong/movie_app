@@ -1,44 +1,53 @@
 import React from "react";
-import PropTypes from "prop-types"
+import axios from "axios";
+import Movie from "./Movie";
+import "./App.css";
 
 class App extends React.Component {
-    constructor() {
-        super();
-        console.log("hello");
+    state = {
+        isLoading: true,
+        movies: []
+    };
+
+    getMovies = async() => {
+        const {data: {data : {movies}}} = await axios.get("https://yts-proxy.now.sh/list_movies.json?sort_by=rating");
+        //console.log(movies);
+        this.setState({movies: movies, isLoading: false});
     }
 
     componentDidMount() {
-        console.log("component rendered");
+        this.getMovies();
     }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log("I just updated");
-    }
-    componentWillUnmount() {
-        console.log("Goodbye, cruel");
-    }
-
-    state = {
-        count: 0
-    }
-
-    add = () => {
-        this.setState(current => ({count: current.count + 1}));
-    };
-    minus = () => {
-        this.setState(current => ({count: current.count - 1}));
-    };
 
     render (){
-        console.log("I'm rendering");
+        const { isLoading, movies } = this.state;
         return (
-        <div>
-            <h1>The number is: {this.state.count}</h1>
-            <button onClick={this.add}>Add</button>
-            <button onClick={this.minus}>Minus</button>
-        </div>
+        <section className="container">
+            {isLoading ? (
+                <div className="loader">
+                    <span className="loader__text">Loading...</span>
+                </div>
+            ) : (
+                <div className="movies">
+                    {movies.map(movie => (
+                        <Movie
+                            key={movie.id}
+                            id={movie.id}
+                            year={movie.year}
+                            title={movie.title}
+                            summary={movie.summary}
+                            poster={movie.medium_cover_image}
+                            genres={movie.genres}
+                        />
+                    ))}
+                </div>
+            )}
+        </section>
         )
     }
 }
 
 export default App;
+
+// api test url
+//   - https://yts-proxy.now.sh/list_movies.json
