@@ -4,3 +4,4 @@ React JS Fundamentals Course (2020 Update!)
 
 ### Libraries
 npm i prop-types --save
+npm i axios --save
